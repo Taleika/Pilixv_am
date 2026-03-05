@@ -11,11 +11,11 @@
   <!-- Open Graph para WhatsApp / Facebook -->
   <meta property="og:title" content="Te invito a Mis Quince Años!">
   <meta property="og:description" content="Acompáñame a celebrar mis XV en una noche inolvidable🫶">
-  <meta property="og:image" content="https://taleika.github.io/Pilixv/images/miniatura.jpg">
+  <meta property="og:image" content="https://taleika.github.io/Pilixv_am/images/miniatura.jpg">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:url" content="https://taleika.github.io/Pilixv">
+  <meta property="og:url" content="https://taleika.github.io/Pilixv_am">
   <meta property="og:type" content="website">
 
   <!-- Twitter Card -->
@@ -23,7 +23,7 @@
   <meta name="twitter:title" content="Te invito a Mis Quince Años!">
   <meta name="twitter:description" content="Acompáñame a celebrar mis XV en una noche inolvidable!
 🫶">
-  <meta name="twitter:image" content="https://taleika.github.io/Pilixv/images/miniatura.jpg">
+  <meta name="twitter:image" content="https://taleika.github.io/Pilixv_am/images/miniatura.jpg">
 
   <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
@@ -157,23 +157,35 @@
       50%{ transform: scale(1.15); }
     }
 
-    /* Galería */
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 10px;
-    }
-    .gallery img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.3s;
-    }
-    .gallery img:hover {
-      transform: scale(1.05);
-    }
+/* Galería */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .gallery {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Celular */
+@media (max-width: 600px) {
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.gallery img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
 
     /* Botones gris oscuro */
     .btn {
@@ -203,6 +215,30 @@
       max-width: 90%;
       max-height: 90%;
       border-radius: 12px;
+    }
+
+    .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 40px;
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+      padding: 15px;
+      transition: opacity 0.3s;
+    }
+
+    .nav-arrow:hover {
+      opacity: 0.7;
+    }
+
+    .prev {
+      left: 20px;
+    }
+
+    .next {
+      right: 20px;
     }
 
     /* Secciones verdes */
@@ -293,7 +329,7 @@
   <img src="images/icono-fiesta.svg" alt="Fiesta" class="icon">
   <h2>Fiesta</h2>
   <p><strong>4 de Abril de 2026</strong><br>
-  21:00 hs<br>
+  Despues de las 00:00 hs<br>
   Club Bancarios<br>
   Saladillo, BsAs</p>
   <a href="https://maps.app.goo.gl/Uo2ic5Mbo77kMxRw9" target="_blank" class="btn">Cómo llegar</a>
@@ -391,13 +427,67 @@
   // Lightbox
   const modal = document.getElementById('modal');
   const modalImg = document.getElementById('modal-img');
-  document.querySelectorAll('.gallery img').forEach(img=>{
-    img.addEventListener('click', ()=>{
-      modal.style.display='flex';
-      modalImg.src=img.src;
+  const galleryImages = document.querySelectorAll('.gallery img');
+  let currentIndex = 0;
+
+  const prevArrow = document.createElement('span');
+  prevArrow.classList.add('nav-arrow', 'prev');
+  prevArrow.innerHTML = '&#10094;';
+
+  const nextArrow = document.createElement('span');
+  nextArrow.classList.add('nav-arrow', 'next');
+  nextArrow.innerHTML = '&#10095;';
+
+  modal.appendChild(prevArrow);
+  modal.appendChild(nextArrow);
+
+  function showImage(index) {
+    if (index < 0) {
+      currentIndex = galleryImages.length - 1;
+    } else if (index >= galleryImages.length) {
+      currentIndex = 0;
+    } else {
+      currentIndex = index;
+    }
+    modalImg.src = galleryImages[currentIndex].src;
+  }
+
+  galleryImages.forEach((img, index) => {
+    img.addEventListener('click', () => {
+      modal.style.display = 'flex';
+      showImage(index);
     });
   });
-  modal.addEventListener('click', ()=>{ modal.style.display='none'; });
+
+  prevArrow.addEventListener('click', (event) => {
+    event.stopPropagation();
+    showImage(currentIndex - 1);
+  });
+
+  nextArrow.addEventListener('click', (event) => {
+    event.stopPropagation();
+    showImage(currentIndex + 1);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (modal.style.display !== 'flex') return;
+
+    if (event.key === 'ArrowRight') {
+      showImage(currentIndex + 1);
+    }
+
+    if (event.key === 'ArrowLeft') {
+      showImage(currentIndex - 1);
+    }
+
+    if (event.key === 'Escape') {
+      modal.style.display = 'none';
+    }
+  });
+
+  modal.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
 
   // Parallax estable (mobile + desktop)
 const parallaxElems = document.querySelectorAll('.parallax');
